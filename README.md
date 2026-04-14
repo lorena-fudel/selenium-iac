@@ -1,28 +1,49 @@
 # IAC Selenium Automation Test
 
-Este proyecto contiene un script automatizado usando Selenium (`0-test-welcome-iac.py`) diseñado para demostrar la automatización de pruebas multi-navegador sobre la web del **Instituto de Astrofísica de Canarias** (https://www.iac.es/).
+Este repositorio documenta e implementa diversas estrategias de automatización de pruebas de interfaz de usuario usando **Selenium** y **Python** sobre la web del [Instituto de Astrofísica de Canarias](https://www.iac.es/).
 
 ## 📋 Requisitos Previos
 
-- **Python 3.x**
-- La librería de Selenium (se instala ejecutando `pip install selenium` en tu terminal).
-- Navegadores soportados instalados: **Google Chrome**, **Microsoft Edge** y **Mozilla Firefox**.
+- **Python 3.x** instalado.
+- Navegadores preinstalados: Google Chrome, Microsoft Edge y Mozilla Firefox.
+- Instalar las dependencias de este entorno ubicadas en `requirements.txt`:
+  ```bash
+  pip install -r requirements.txt
+  ```
 
-## 🚀 ¿Qué hace el script?
+## 🏗️ Arquitectura Profesional (Pytest + POM)
 
-Cuando se ejecuta, de forma secuencial por cada navegador, realiza el siguiente flujo:
-1. Abre el navegador (Chrome, Edge y finalmente Firefox).
-2. Navega a la web principal `https://www.iac.es/`.
-3. Intercepta el banner de cookies (Cookiebot) que oscurece la pantalla, **esperando** a que cargue y pulsando automáticamente el botón de **rechazar cookies**.
-4. Realiza una pequeña pausa consciente para que el banner desaparezca para siempre.
-5. Busca el icono de herramientas del buscador en la esquina superior (la típica lupa) y le hace clic.
-6. Localiza el campo de texto de la búsqueda, introduce las palabras `ofertas de trabajo`.
-7. Envía un pulso de tecla `ENTER` para enviar la petición a la web y recargar la página.
-8. Una vez terminados los tres navegadores, retiene las ventanas abiertas permanentemente para que puedas consultar cómo ha quedado el resultado de la búsqueda en cada pantalla por separado.
+Para escalar la automatización a niveles de entorno empresarial, se ha dividido y estructurado el código usando el patrón **Page Object Model (POM)** con el ejecutor automático **Pytest**:
 
-## 💻 ¿Cómo ejecutarlo?
+- **`pages/`**: Contiene la lógica visual de las páginas de la web. Separando de este modo los selectores "Locators" (XPath y CSS) del test en sí.
+  - `base_page.py`: Acciones universales como esperas dinámicas, clics y teclado.
+  - `home_page.py`: Interacciones específicas (lupa, cookies, input de la home de la web del IAC).
+- **`tests/`**: Dónde viven nuestros verdaderos reportes de calidad.
+  - `conftest.py`: El cerebro oculto. Dispone de un _fixture_ mágico para abrir automáticamente y de fondo Chrome, Edge y Firefox, y limpiarlos al acabar sin tocar el test.
+  - `test_busqueda.py`: Un bloque de código ultra-simple y en lenguaje casi natural que consume las directrices de la carpeta _pages_.
 
-Simplemente abre una terminal (o línea de comandos) en este mismo directorio y escribe:
+### 🚀 ¿Cómo lanzar los Tests Pro?
+
+Al utilizar `pytest`, el sistema recogerá todos los tests independientemente y nos montará una infraestructura de reporting automático.
+Para probarlo y ver cómo la búsqueda se repite transparentemente en los tres navegadores:
+
+```bash
+pytest --html=reporte.html
+```
+*Al terminar, busca e inspecciona el archivo `reporte.html` para ver un resumen formal de las pasadas del test.*
+
+---
+
+## 📙 Script Original y Básico (Versión de Introducción)
+
+Si prefieres la forma lineal interactiva y aprender paso por paso, en el directorio raíz se encuentra `0-test-welcome-iac.py`.
+
+###  ¿Qué hace el script simple?
+1. Abre de forma consecutiva (y no las cierra) tres ventanas: Chrome, Edge y Firefox buscando la URL `https://www.iac.es/`.
+2. Intercepta el diálogo de `Cookiebot` usando una espera dinámica (WebDriverWait) para denegarlo.
+3. Simula la pulsación del buscador y expide la frase `ofertas de trabajo` presionando Enter automáticamente.
+
+### ¿Cómo ejecutar el modo básico?
 ```bash
 python 0-test-welcome-iac.py
 ```

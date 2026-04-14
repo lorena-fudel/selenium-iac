@@ -1,21 +1,28 @@
-# Uso de Selenium en el Desarrollo de Software
+# Uso de Selenium y Pytest en el Desarrollo de Software
 
-La automatización que hemos construido con Selenium es la base de lo que en la industria se conoce como **Automatización de Pruebas de Interfaz de Usuario (UI)** o **Pruebas End-to-End (E2E)**.
+La automatización construida con herramientas como Selenium es la base de lo que en el ecosistema de calidad de software se conoce como **Automatización de Pruebas de Interfaz de Usuario (UI)** o **Pruebas End-to-End (E2E)**.
 
-Dentro del desarrollo de software profesional, Selenium cumple ciertos propósitos clave:
+Se diferencian de las pruebas unitarias en que no prueban una función matemática en el *back-end*, sino el sistema vivo real desde los zapatos de un usuario final humano.
 
-### 1. Pruebas End-to-End (Simular al usuario real)
-En desarrollo, no basta con probar bloques aislados de código en back-end (pruebas unitarias). Selenium permite controlar visualmente la pantalla como lo haría una persona humana: localiza botones, abre menús, teclea contraseñas y hace clics. Su objetivo es confirmar que "el viaje completo" funciona tal y como lo experimentaría el usuario final.
+### Las 3 Capas de la Automatización UI en la Industria:
 
-### 2. Pruebas de Regresión (Impedir que se rompa el pasado)
-Al desarrollar una funcionalidad nueva o arreglar un bug, es fácil romper en el proceso algo que ya funcionaba. Antes de mandar los cambios a producción, los equipos corren automáticamente baterías de tests en Selenium (similares al creado aquí) para asegurarse de que una nueva actualización en el buscador, por ejemplo, no haya estropeado el menú principal que funcionaba perfectamente.
+#### 1. Casos de Uso Diarios (El "Por qué" lo usamos)
+* **Pruebas E2E**: Localizar elementos visuales, abrir menús interactivos, teclear o emular flujos completos como iniciar sesión en un portal.
+* **Pruebas de Regresión**: Blindajes del código. Evita que un nuevo cambio en el HTML o en el API rompa funcionalidad fundamental del pasado.
+* **Cross-Browser Testing**: Escalar un test en los diferentes ecosistemas del cliente (Chrome en Windows, Safari en MacOS).
 
-### 3. Pruebas Multi-Navegador (Cross-Browser Testing)
-Asegura que tu desarrollo se comporta correctamente sea cual sea el visor que utiliza el cliente. Si un script en JavaScript de tu nueva página despliega un menú en Edge pero falla en Firefox, correr estos tests te permitirá ver el fallo en seguida sin requerir probar navegador por navegador a mano.
+#### 2. Frameworks de Prueba (Ej: `pytest`)
+Nadie aúna "tests" bajo scripts independientes. El nivel profesional requiere herramientas automatizadas para la recogida de métricas:
+* **Ejecución Centralizada:** Capacidad para poner a buscar 10 o 500 pruebas funcionales de una tacada mediante un único comando en terminal (`pytest`).
+* **Reporting:** Generación automática de reportes XML/HTML (`pytest-html`) sobre lo que ha pasado, sin tener que analizar visualmente la consola.
+* **Setups & Teardowns (Fixtures):** Pytest delega la carga inicial y el cerrado/limpiado del navegador (ej: el borrado de las cookies residuales) a los ficheros como `conftest.py`, dejando el foco íntegramente al Test.
 
-### 4. Automatización de Tareas (Botting) y "Web Scraping"
-Pese a que nació para testing, muchos programadores usan toda esta estructura para automatizar flujos repetitivos y burocráticos (ej. bajar un reporte a fin de mes de un portal corporativo interno) o para extraer inteligentemente (Web Scraping) millones de registros de pantallas dinámicas donde librerías simples de backend no sirven.
+#### 3. Page Object Model (El patrón rey: POM)
+Es el patrón de arquitectura más estandarizado a nivel mundial para escribir rutinas de Selenium:
+* Promueve un mantenimiento inteligente e inquebrantable de los scripts.
+* Separa la **Capa Estructural** (los Locators CSS, XPath...) en "Páginas", fuera del espacio interactivo.
+* Separa la **Capa Lógica** (el código `test`) de manera que las comprobaciones de QA tengan forma del lenguaje humano (*ej: cargar(), buscar("botón")*). ¡Si cambia una imagen en el Front-End, no tocas nunca el test en sí mismo, sencillamente ajustas la variable del elemento en la página (POM)!
 
 ---
 
-**Resumen general del flujo:** En un entorno laboral, este simple script se subiría a la nube o a unos entornos llamados de integración continua. Cada vez que el equipo guarde nuevo código de la web del IAC, estos "robots" probarían independientemente los clics y campos, garantizando un sello de calidad mínimo antes del despliegue en un servidor público.
+**Resumen general del flujo:** En un entorno laboral, toda esta arquitectura orientada a objetos usando POM y Pytest viviría dentro del repositorio troncal. En el momento en que un programador haga `git push` a "producción", un sistema automático bajará todo tu código, preparará los *Fixtures* e internamente validará mediante comprobaciones (Asserts) que tu Test de búsqueda haya dado luz verde.
