@@ -1,0 +1,17 @@
+site_name: Proyecto Selenium IAC
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+plugins:
+  - mkdocstrings
+nav:
+  - Introducción: index.md
+  - Page Objects:
+    - Base Page: pages/base.md
+    - Home IAC: pages/home.md
